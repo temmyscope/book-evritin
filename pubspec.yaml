@@ -23,6 +23,9 @@ dependencies:
 
   intl: ^0.16.1
   flutter_localized_locales: ^1.1.1
+  flutter_swiper: ^1.1.6
+
+
 
 dev_dependencies:
   flutter_test:

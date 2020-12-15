@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/foundation.dart';
+import 'package:flutter_swiper/flutter_swiper.dart';
 
 class Home extends StatefulWidget {
   Home({Key key}) : super(key: key);
@@ -177,11 +178,25 @@ class StoreContent extends StatelessWidget {
           child: Stack(
             children: [
               Positioned.fill(
-                child: Ink.image(
-                  image: NetworkImage(store.imageName),
-                  fit: BoxFit.cover,
-                  child: Container(),
-                ),
+                child:
+                  Swiper(
+                    itemBuilder: (BuildContext context, int index) {
+                      return Image.network(store.imageName , fit: BoxFit.cover);
+                    },
+                    itemCount: 3,
+                    scrollDirection: Axis.horizontal,
+                    loop: true,
+                    duration: 300,
+                    autoplay: true,
+                    onIndexChanged: (index) {  },
+                    onTap: (index) {  },
+                    //control: SwiperControl(),
+                    //pagination: SwiperPagination(
+                        //alignment: Alignment.bottomRight, margin: EdgeInsets.only(bottom: 20.0, right: 20.0), builder: SwiperPagination.fraction
+                    //),
+                    autoplayDelay: 3000,
+                    autoplayDisableOnInteraction : true
+                  ),
               ),
               Positioned(
                 bottom: 16,
