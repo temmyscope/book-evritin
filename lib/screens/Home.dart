@@ -9,16 +9,7 @@ class Home extends StatefulWidget {
 
 }
 
-class _MyStatefulWidgetState extends State<Home>  with RestorationMixin {
-  final RestorableBool _isSelected = RestorableBool(false);
-
-  @override
-  String get restorationId => 'cards';
-
-  @override
-  void restoreState(RestorationBucket oldBucket, bool initialRestore) {
-    registerForRestoration(_isSelected, 'is_selected');
-  }
+class _MyStatefulWidgetState extends State<Home>{
 
   @override
   Widget build(BuildContext context) {
@@ -29,15 +20,7 @@ class _MyStatefulWidgetState extends State<Home>  with RestorationMixin {
           padding: const EdgeInsets.only(top: 8, left: 8, right: 8),
           children: [
             for (final store in stores(context))
-              Container(
-                margin: const EdgeInsets.only(bottom: 8),
-                child: SelectableStoreItem(
-                  store: store, isSelected: _isSelected.value,
-                  onSelected: () {
-                    setState(() { _isSelected.value = !_isSelected.value; });
-                  },
-                ),
-              ),
+              Container( margin: const EdgeInsets.only(bottom: 8), child: SelectableStoreItem(store: store) ),
           ],
         ),
       ),
@@ -61,32 +44,55 @@ class Store {
 
 List<Store> stores(BuildContext context) => [
   Store(
-      imageName: 'https://gallery.flutter.dev/#/demo/card/places/india_tanjore_thanjavur_temple.png',
+      imageName: 'https://ik.imagekit.io/ikmedia/backlit.jpg?tr=w-100,h-100,dpr-2',
       title:"Deroyal Cocktail", description: "We Bring the bar to you", category: "Mobile Bar", location: "Lagos, Nigeria"
   ),
   Store(
-      imageName: 'https://gallery.flutter.dev/#/demo/card/places/india_tanjore_thanjavur_temple.png',
+      imageName: 'https://ik.imagekit.io/ikmedia/backlit.jpg?tr=w-100,h-100,dpr-2',
       title:"Deroyal Cocktail", description: "We Bring the bar to you", category: "Mobile Bar", location: "Lagos, Nigeria"
   ),
   Store(
-      imageName: 'https://gallery.flutter.dev/#/demo/card/places/india_tanjore_thanjavur_temple.png',
+      imageName: 'https://ik.imagekit.io/ikmedia/backlit.jpg?tr=w-100,h-100,dpr-2',
       title:"Deroyal Cocktail", description: "We Bring the bar to you", category: "Mobile Bar", location: "Lagos, Nigeria"
   ),
 ];
 
-class SelectableStoreItem extends StatelessWidget {
+class SelectableStoreItem extends StatefulWidget {
+  SelectableStoreItem({Key key, @required this.store}) : assert(store != null), super(key: key);
 
-  const SelectableStoreItem({
-    Key key, @required this.store, @required this.isSelected, @required this.onSelected, this.shape,
-  })  : assert(store != null), super(key: key);
+  final Store store;
+
+  @override
+  _SelectableStoreItem createState() => _SelectableStoreItem(store: this.store);
+
+}
+
+class _SelectableStoreItem extends State<SelectableStoreItem> with RestorationMixin {
+
+  _SelectableStoreItem({
+    Key key, @required this.store, this.shape,
+  })  : assert(store != null);//, super(key: key);
 
   final Store store;
   final ShapeBorder shape;
-  final bool isSelected;
-  final VoidCallback onSelected;
+  final RestorableBool isSelected = RestorableBool(false);
+
+  void onSelected(){
+    setState(() {
+      isSelected.value = !isSelected.value;
+    });
+  }
 
   // This height will allow for all the Card's content to fit comfortably within the card.
   static const height = 298.0;
+
+  @override
+  String get restorationId => 'cards';
+
+  @override
+  void restoreState(RestorationBucket oldBucket, bool initialRestore) {
+    registerForRestoration(isSelected, 'is_selected');
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -112,13 +118,13 @@ class SelectableStoreItem extends StatelessWidget {
                   highlightColor: Colors.transparent,
                   child: Stack(
                     children: [
-                      Container( color: isSelected ? colorScheme.primary.withOpacity(0.08) : Colors.transparent ),
+                      Container( color: isSelected.value ? colorScheme.primary.withOpacity(0.08) : Colors.transparent ),
                       StoreContent(store: store),
                       Align(
                         alignment: Alignment.topRight,
                         child: Padding(
                           padding: const EdgeInsets.all(8),
-                          child: Icon( Icons.check_circle, color: isSelected ? colorScheme.primary : Colors.transparent ),
+                          child: Icon( Icons.check_circle, color: isSelected.value ? colorScheme.primary : Colors.transparent ),
                         ),
                       ),
                     ],
@@ -152,6 +158,7 @@ class SectionTitle extends StatelessWidget {
 }
 
 class StoreContent extends StatelessWidget {
+
   const StoreContent({Key key, @required this.store}): assert(store != null), super(key: key);
 
   final Store store;
@@ -159,7 +166,7 @@ class StoreContent extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
-    final titleStyle = theme.textTheme.headline5.copyWith(color: Colors.white);
+    final titleStyle = theme.textTheme.headline5.copyWith(color: Colors.black87);
     final descriptionStyle = theme.textTheme.subtitle1;
 
     return Column(
@@ -171,7 +178,7 @@ class StoreContent extends StatelessWidget {
             children: [
               Positioned.fill(
                 child: Ink.image(
-                  image: AssetImage(store.imageName),
+                  image: NetworkImage(store.imageName),
                   fit: BoxFit.cover,
                   child: Container(),
                 ),
