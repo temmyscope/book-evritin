@@ -23,12 +23,13 @@ class MyStatefulWidget extends StatefulWidget {
 }
 
 class _MyStatefulWidgetState extends State<MyStatefulWidget> {
+
   int _selectedIndex = 0;
 
   static const TextStyle optionStyle = TextStyle(fontSize: 30, fontWeight: FontWeight.bold);
 
-  static const List<Widget> _widgetOptions = <Widget>[
-    Text( 'Index 0: Home', style: optionStyle ),
+  final List<Widget> _widgetOptions = [
+    Home(),
     Text( 'Index 0: Create', style: optionStyle ),
     Text( 'Index 0: Send', style: optionStyle ),
     Text( 'Index 0: Saved', style: optionStyle ),
@@ -70,9 +71,9 @@ class _MyStatefulWidgetState extends State<MyStatefulWidget> {
               child: _widgetOptions.elementAt(_selectedIndex),
               onRefresh: (){
                 return Future<void>.delayed(const Duration(seconds: 1))
-                  ..then<void>((_) {
-                    //if (mounted) { setState(() => ()); }
-                  });
+                ..then<void>((_) {
+                  //if (mounted) { setState(() => ()); }
+                });
               }
           )
 

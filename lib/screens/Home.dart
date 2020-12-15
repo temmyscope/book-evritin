@@ -28,12 +28,14 @@ class _MyStatefulWidgetState extends State<Home>  with RestorationMixin {
           restorationId: 'cards_demo_list_view',
           padding: const EdgeInsets.only(top: 8, left: 8, right: 8),
           children: [
-            for (final destination in destinations(context))
+            for (final store in stores(context))
               Container(
                 margin: const EdgeInsets.only(bottom: 8),
-                child: SelectableTravelDestinationItem(
-                  destination: destination, isSelected: _isSelected.value,
-                  onSelected: () { setState(() { _isSelected.value = !_isSelected.value; }); },
+                child: SelectableStoreItem(
+                  store: store, isSelected: _isSelected.value,
+                  onSelected: () {
+                    setState(() { _isSelected.value = !_isSelected.value; });
+                  },
                 ),
               ),
           ],
@@ -43,8 +45,9 @@ class _MyStatefulWidgetState extends State<Home>  with RestorationMixin {
   }
 }
 
-class TravelDestination {
-  const TravelDestination({
+class Store {
+
+  const Store({
     @required this.imageName, @required this.title,  @required this.description, @required this.category, @required this.location,
   }) : assert(imageName != null), assert(title != null), assert(description != null), assert(category != null), assert(location != null);
 
@@ -53,29 +56,31 @@ class TravelDestination {
   final String description;
   final String category;
   final String location;
+
 }
 
-List<TravelDestination> destinations(BuildContext context) => [
-  TravelDestination(
+List<Store> stores(BuildContext context) => [
+  Store(
       imageName: 'https://gallery.flutter.dev/#/demo/card/places/india_tanjore_thanjavur_temple.png',
       title:"Deroyal Cocktail", description: "We Bring the bar to you", category: "Mobile Bar", location: "Lagos, Nigeria"
   ),
-  TravelDestination(
+  Store(
       imageName: 'https://gallery.flutter.dev/#/demo/card/places/india_tanjore_thanjavur_temple.png',
       title:"Deroyal Cocktail", description: "We Bring the bar to you", category: "Mobile Bar", location: "Lagos, Nigeria"
   ),
-  TravelDestination(
+  Store(
       imageName: 'https://gallery.flutter.dev/#/demo/card/places/india_tanjore_thanjavur_temple.png',
       title:"Deroyal Cocktail", description: "We Bring the bar to you", category: "Mobile Bar", location: "Lagos, Nigeria"
   ),
 ];
 
-class SelectableTravelDestinationItem extends StatelessWidget {
-  const SelectableTravelDestinationItem({
-    Key key, @required this.destination, @required this.isSelected, @required this.onSelected, this.shape,
-  })  : assert(destination != null), super(key: key);
+class SelectableStoreItem extends StatelessWidget {
 
-  final TravelDestination destination;
+  const SelectableStoreItem({
+    Key key, @required this.store, @required this.isSelected, @required this.onSelected, this.shape,
+  })  : assert(store != null), super(key: key);
+
+  final Store store;
   final ShapeBorder shape;
   final bool isSelected;
   final VoidCallback onSelected;
@@ -94,7 +99,7 @@ class SelectableTravelDestinationItem extends StatelessWidget {
         padding: const EdgeInsets.all(8),
         child: Column(
           children: [
-            SectionTitle( title: "Card" ),
+            //SectionTitle( title: "Card" ),
             SizedBox(
               height: height,
               child: Card(
@@ -108,7 +113,7 @@ class SelectableTravelDestinationItem extends StatelessWidget {
                   child: Stack(
                     children: [
                       Container( color: isSelected ? colorScheme.primary.withOpacity(0.08) : Colors.transparent ),
-                      TravelDestinationContent(destination: destination),
+                      StoreContent(store: store),
                       Align(
                         alignment: Alignment.topRight,
                         child: Padding(
@@ -143,14 +148,13 @@ class SectionTitle extends StatelessWidget {
       ),
     );
   }
+
 }
 
-class TravelDestinationContent extends StatelessWidget {
-  const TravelDestinationContent({Key key, @required this.destination})
-      : assert(destination != null),
-        super(key: key);
+class StoreContent extends StatelessWidget {
+  const StoreContent({Key key, @required this.store}): assert(store != null), super(key: key);
 
-  final TravelDestination destination;
+  final Store store;
 
   @override
   Widget build(BuildContext context) {
@@ -167,7 +171,7 @@ class TravelDestinationContent extends StatelessWidget {
             children: [
               Positioned.fill(
                 child: Ink.image(
-                  image: AssetImage(destination.imageName),
+                  image: AssetImage(store.imageName),
                   fit: BoxFit.cover,
                   child: Container(),
                 ),
@@ -179,7 +183,7 @@ class TravelDestinationContent extends StatelessWidget {
                 child: FittedBox(
                   fit: BoxFit.scaleDown,
                   alignment: Alignment.centerLeft,
-                  child: Text(destination.title, style: titleStyle,),
+                  child: Text(store.title, style: titleStyle,),
                 ),
               ),
             ],
@@ -197,12 +201,12 @@ class TravelDestinationContent extends StatelessWidget {
                 Padding(
                   padding: const EdgeInsets.only(bottom: 8),
                   child: Text(
-                    destination.description,
+                    store.description,
                     style: descriptionStyle.copyWith(color: Colors.black54),
                   ),
                 ),
-                Text(destination.category),
-                Text(destination.location),
+                Text(store.category),
+                Text(store.location),
               ],
             ),
           ),
