@@ -32,33 +32,74 @@ class _MyStatefulWidgetState extends State<Home>{
 class Store {
 
   const Store({
-    @required this.imageName, @required this.title,  @required this.description, @required this.category, @required this.location,
-  }) : assert(imageName != null), assert(title != null), assert(description != null), assert(category != null), assert(location != null);
+    @required this.imageName, @required this.title,  @required this.description,
+    @required this.category, @required this.location, @required this.products
+  }) : assert(imageName != null), assert(title != null), assert(description != null),
+        assert(category != null), assert(location != null);
 
   final String imageName;
   final String title;
   final String description;
   final String category;
   final String location;
+  final List<Product> products;
+}
+
+class Product{
+
+  const Product({ @required this.id , @required this.imageName, @required this.name, @required this.price, @required this.type })
+      : assert(imageName != null), assert(name != null), assert(price != null), assert(type != null);
+
+  final int id;
+  final String imageName;
+  final String name;
+  final num price;
+  final ProductType type;
 
 }
 
+enum ProductType{
+  service, product
+}
+
 List<Store> stores(BuildContext context) => [
+
   Store(
       imageName: 'https://ik.imagekit.io/ikmedia/backlit.jpg?tr=w-100,h-100,dpr-2',
+      products: [
+        Product(
+            id: 1,
+            imageName: 'https://ik.imagekit.io/ikmedia/backlit.jpg?tr=w-100,h-100,dpr-2',
+            name: 'Royal 2go', price: 700.20, type: ProductType.product
+        ),
+        Product(
+            id: 2,
+            imageName: 'https://ik.imagekit.io/ikmedia/backlit.jpg?tr=w-100,h-100,dpr-2',
+            name: 'Royal 2go', price: 700.20, type: ProductType.product
+        ),
+      ],
       title:"Deroyal Cocktail", description: "We Bring the bar to you", category: "Mobile Bar", location: "Lagos, Nigeria"
   ),
   Store(
       imageName: 'https://ik.imagekit.io/ikmedia/backlit.jpg?tr=w-100,h-100,dpr-2',
+      products: [
+        Product(
+          id: 7,
+          imageName: 'https://ik.imagekit.io/ikmedia/backlit.jpg?tr=w-100,h-100,dpr-2',
+          name: 'Royal 2go', price: 700.20, type: ProductType.product
+        ),
+        Product(
+            id: 9,
+            imageName: 'https://ik.imagekit.io/ikmedia/backlit.jpg?tr=w-100,h-100,dpr-2',
+            name: 'Royal 2go', price: 700.20, type: ProductType.product
+        )
+      ],
       title:"Deroyal Cocktail", description: "We Bring the bar to you", category: "Mobile Bar", location: "Lagos, Nigeria"
-  ),
-  Store(
-      imageName: 'https://ik.imagekit.io/ikmedia/backlit.jpg?tr=w-100,h-100,dpr-2',
-      title:"Deroyal Cocktail", description: "We Bring the bar to you", category: "Mobile Bar", location: "Lagos, Nigeria"
-  ),
+  )
 ];
 
 class SelectableStoreItem extends StatefulWidget {
+
   SelectableStoreItem({Key key, @required this.store}) : assert(store != null), super(key: key);
 
   final Store store;
@@ -71,8 +112,8 @@ class SelectableStoreItem extends StatefulWidget {
 class _SelectableStoreItem extends State<SelectableStoreItem> with RestorationMixin {
 
   _SelectableStoreItem({
-    Key key, @required this.store, this.shape,
-  })  : assert(store != null);//, super(key: key);
+    @required this.store, this.shape,
+  })  : assert(store != null);
 
   final Store store;
   final ShapeBorder shape;
@@ -85,7 +126,7 @@ class _SelectableStoreItem extends State<SelectableStoreItem> with RestorationMi
   }
 
   // This height will allow for all the Card's content to fit comfortably within the card.
-  static const height = 298.0;
+  static const height = 400.0;
 
   @override
   String get restorationId => 'cards';
@@ -167,46 +208,33 @@ class StoreContent extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
-    final titleStyle = theme.textTheme.headline5.copyWith(color: Colors.black87);
+    final titleStyle = theme.textTheme.headline6.copyWith(color: Colors.black87);
     final descriptionStyle = theme.textTheme.subtitle1;
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         SizedBox(
-          height: 184,
+          height: 200,
           child: Stack(
             children: [
               Positioned.fill(
                 child:
                   Swiper(
                     itemBuilder: (BuildContext context, int index) {
-                      return Image.network(store.imageName , fit: BoxFit.cover);
+                      return Image.network(store.products[index].imageName , fit: BoxFit.fill);
                     },
-                    itemCount: 3,
+                    itemCount: store.products.length,
                     scrollDirection: Axis.horizontal,
                     loop: true,
                     duration: 300,
                     autoplay: true,
                     onIndexChanged: (index) {  },
-                    onTap: (index) {  },
-                    //control: SwiperControl(),
-                    //pagination: SwiperPagination(
-                        //alignment: Alignment.bottomRight, margin: EdgeInsets.only(bottom: 20.0, right: 20.0), builder: SwiperPagination.fraction
-                    //),
+                    onTap: (index) { /** for adding  to cart **/  },
+                    //control: SwiperControl( color: Colors.lightGreen),
                     autoplayDelay: 3000,
                     autoplayDisableOnInteraction : true
                   ),
-              ),
-              Positioned(
-                bottom: 16,
-                left: 16,
-                right: 16,
-                child: FittedBox(
-                  fit: BoxFit.scaleDown,
-                  alignment: Alignment.centerLeft,
-                  child: Text(store.title, style: titleStyle,),
-                ),
               ),
             ],
           ),
@@ -218,7 +246,7 @@ class StoreContent extends StatelessWidget {
             overflow: TextOverflow.ellipsis,
             style: descriptionStyle,
             child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
+              crossAxisAlignment: CrossAxisAlignment.center,
               children: [
                 Padding(
                   padding: const EdgeInsets.only(bottom: 8),
@@ -227,28 +255,25 @@ class StoreContent extends StatelessWidget {
                     style: descriptionStyle.copyWith(color: Colors.black54),
                   ),
                 ),
-                Text(store.category),
-                Text(store.location),
+                Text("${store.category}"),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Text("${store.title} | ", style: titleStyle,),
+                    Text(store.location),
+                    IconButton(
+                        icon: const Icon(Icons.share_sharp ),
+                        color: Colors.lightGreen,
+                        tooltip: 'Share',
+                        onPressed: () {
+                          print('pressed');
+                        }
+                    ),
+                  ],
+                )
               ],
             ),
           ),
-        ),
-        ButtonBar(
-          alignment: MainAxisAlignment.start,
-          children: [
-            TextButton(
-              child: Text("Cart"),
-              onPressed: () {
-                print('pressed');
-              },
-            ),
-            TextButton(
-              child: Text("Share"),
-              onPressed: () {
-                print('pressed');
-              },
-            ),
-          ],
         ),
       ],
     );
