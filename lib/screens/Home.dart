@@ -257,9 +257,9 @@ class StoreContent extends StatelessWidget {
                 ),
                 Text("${store.category}"),
                 Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
+                  mainAxisAlignment: MainAxisAlignment.spaceAround,
                   children: [
-                    Text("${store.title} | ", style: titleStyle,),
+                    Text("${store.title}  ", style: titleStyle,),
                     Text(store.location),
                     IconButton(
                         icon: const Icon(Icons.share_sharp ),
