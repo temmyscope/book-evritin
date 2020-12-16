@@ -126,7 +126,7 @@ class _SelectableStoreItem extends State<SelectableStoreItem> with RestorationMi
   }
 
   // This height will allow for all the Card's content to fit comfortably within the card.
-  static const height = 400.0;
+  static const height = 379.20;
 
   @override
   String get restorationId => 'cards';
@@ -215,7 +215,7 @@ class StoreContent extends StatelessWidget {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         SizedBox(
-          height: 200,
+          height: 250,
           child: Stack(
             children: [
               Positioned.fill(
