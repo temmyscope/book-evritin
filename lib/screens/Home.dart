@@ -43,6 +43,7 @@ class Store {
   final String category;
   final String location;
   final List<Product> products;
+
 }
 
 class Product{

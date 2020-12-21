@@ -1,5 +1,7 @@
+import 'package:bookevritin/screens/Saved.dart';
 import 'package:flutter/material.dart';
 import 'package:bookevritin/screens/Home.dart';
+import 'package:bookevritin/screens/Send.dart';
 import 'package:bookevritin/screens/Create.dart';
 
 void main() => runApp( MyApp() );
@@ -31,11 +33,68 @@ class _MyStatefulWidgetState extends State<MyStatefulWidget> {
 
   final List<Widget> _widgetOptions = [
     Home(),
-    Text( 'Index 0: Create', style: optionStyle ),
-    Text( 'Index 0: Send', style: optionStyle ),
-    Text( 'Index 0: Saved', style: optionStyle ),
+    Create(),
+    Send(),
+    Saved(),
     Text( 'Index 0: Settings', style: optionStyle )
   ];
+  final List<String> _titles = [
+    'Home', 'Create Store', 'Money Transfer', 'Bookmarks', 'Settings'
+  ];
+
+  Future<void> _showDemoDialog<T>({BuildContext context, Widget child}) async {
+    child = Theme( data: Theme.of(context), child: child );
+    await showDialog<T>( context: context, builder: (context) => child );
+  }
+
+  confirmLogout(BuildContext context) {
+    final theme = Theme.of(context);
+    _showDemoDialog<String>(
+      context: context,
+      child: SimpleDialog(
+        title: Text("Accounts"),
+        children: [
+          _DialogDemoItem(
+            icon: Icons.warning_amber_sharp ,
+            color: theme.colorScheme.primary,
+            text: 'You are about to be logged out.',
+          ),
+          _DialogDemoItem(
+            icon: Icons.power_settings_new_sharp,
+            text: "Sign Out",
+            color: theme.disabledColor,
+          ),
+        ],
+      ),
+    );
+  }
+
+  void _showSimpleDialog(BuildContext context) {
+    final theme = Theme.of(context);
+    _showDemoDialog<String>(
+      context: context,
+      child: SimpleDialog(
+        title: Text("Accounts"),
+        children: [
+          _DialogDemoItem(
+            icon: Icons.account_circle,
+            color: theme.colorScheme.primary,
+            text: 'username@gmail.com',
+          ),
+          _DialogDemoItem(
+            icon: Icons.account_circle,
+            color: theme.colorScheme.secondary,
+            text: 'user02@gmail.com',
+          ),
+          _DialogDemoItem(
+            icon: Icons.add_circle,
+            text: "Add Account",
+            color: theme.disabledColor,
+          ),
+        ],
+      ),
+    );
+  }
 
   void _onItemTapped(int index) {
     setState(() { _selectedIndex = index; });
@@ -46,23 +105,13 @@ class _MyStatefulWidgetState extends State<MyStatefulWidget> {
     return Scaffold(
 
       appBar: AppBar(
-          title: const Text('BookEvritin'),
+          title: Text(_titles.elementAt(_selectedIndex) ),
           actions: <Widget> [
             IconButton( icon: const Icon(Icons.notifications ), tooltip: 'Notifications', onPressed: () {} ),
             IconButton( icon: const Icon(Icons.shopping_cart_sharp ), tooltip: 'Cart', onPressed: () {} ),
-            PopupMenuButton<Text>(
-              itemBuilder: (context) {
-                return [
-                  PopupMenuItem(
-                    child: ListTile( leading: const Icon(Icons.account_circle_sharp ), title: Text('TemmyScope'), ),
-                  ),
-                  const PopupMenuDivider(),
-                  PopupMenuItem(
-                    child: ListTile( leading: const Icon(Icons.person_add), title: Text('Add Account') ),
-                  ),
-                ];
-              },
-            ),
+            IconButton(icon: const Icon(Icons.more_vert), tooltip: 'Switch Account', onPressed: (){
+              _showSimpleDialog(context);
+            })
           ],
           backgroundColor: Colors.lightGreen,
       ),
@@ -75,7 +124,8 @@ class _MyStatefulWidgetState extends State<MyStatefulWidget> {
                 ..then<void>((_) {
                   //if (mounted) { setState(() => ()); }
                 });
-              }
+              },
+              color: Colors.lightGreen,
           )
 
       ),
@@ -97,7 +147,7 @@ class _MyStatefulWidgetState extends State<MyStatefulWidget> {
       drawer: Drawer(
         child: ListView(
           padding: EdgeInsets.zero,
-          children: const <Widget>[
+          children: <Widget>[
             DrawerHeader(
               decoration: BoxDecoration(
                 color: Colors.lightGreen
@@ -112,10 +162,47 @@ class _MyStatefulWidgetState extends State<MyStatefulWidget> {
             ListTile( leading: Icon(Icons.message), title: Text('Messages') ),
             ListTile( leading: Icon(Icons.lightbulb ), title: Text('Dark Mode') ),
             ListTile( leading: Icon(Icons.devices ), title: Text('My Devices') ),
-            ListTile( leading: Icon(Icons.power_settings_new_sharp ), title: Text('Sign Out') ),
+            ListTile( leading: Icon(Icons.power_settings_new_sharp ), title: Text('Sign Out'), onTap: (){
+              confirmLogout(context);
+            }),
           ],
         )
       )
+    );
+  }
+}
+
+class _DialogDemoItem extends StatelessWidget {
+  const _DialogDemoItem({
+    Key key,
+    this.icon,
+    this.color,
+    this.text,
+  }) : super(key: key);
+
+  final IconData icon;
+  final Color color;
+  final String text;
+
+  @override
+  Widget build(BuildContext context) {
+    return SimpleDialogOption(
+      onPressed: () {
+        Navigator.of(context, rootNavigator: true).pop(text);
+      },
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.start,
+        crossAxisAlignment: CrossAxisAlignment.center,
+        children: [
+          Icon(icon, size: 36, color: color),
+          Flexible(
+            child: Padding(
+              padding: const EdgeInsetsDirectional.only(start: 16),
+              child: Text(text),
+            ),
+          ),
+        ],
+      ),
     );
   }
 }
